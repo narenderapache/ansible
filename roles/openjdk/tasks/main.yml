@@ -1,0 +1,5 @@
+---
+- name: install java
+  yum:
+    name: "{{ openjdk_package_name }}"
+    state: present
