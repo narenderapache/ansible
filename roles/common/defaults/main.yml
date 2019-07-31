@@ -1,0 +1,2 @@
+---
+epel_repo: "https://download.fedoraproject.org/pub/epel/$releasever/$basearch/"
