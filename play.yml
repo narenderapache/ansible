@@ -4,3 +4,4 @@
     # - { role: users,  tags: "users"}
     - { role: common, tags: "common" }
     - { role: openjdk, tags: ["openjdk", "java"] }
+    - { role: docker, tags: "docker"}
