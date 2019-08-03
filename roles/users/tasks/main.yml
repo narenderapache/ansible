@@ -1,0 +1,21 @@
+---
+- name: add user to the vm
+  user:
+    name: narenderavala
+    shell: /bin/bash
+    groups: wheel
+    append: yes
+
+- name: add ssh key to the vm
+  authorized_key:
+    user: narenderavala
+    state: present
+    key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDe8+jYZ6t364HnpHZHJ1wMn6+afWtRg/0Ff4dFwV4j2cN7Y+FycwlFkUQ9J2qNuNoon4/K58lSFO6t0mX4aKveOprkmAppR/5U5zu4KLlDsRZ0VWOykDnn3YcwNXdA/d2BEB0gDAMUmTJ2/z8YQXgWbhI/s7+I4WegJHMZRqxEV5gKSoEhhyRI5OsXDap+JG9orFRXRqe1OUj6bJONmDNDWB0lqNCyTvB2ZuetKzMDaBj8GEQFMWvxer3m6x6mRB6XzFoPRNu034xqytiSo7JrmBle/eBF2yxcWOGfK/OAW+LyZK54eAkyP0vjJlfIFTYoFklWXSzaWTqwjDho0Kdz narenderavala@Narenders-MBP.connect"
+
+- name : nopasswd to the wheel group
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%wheel'
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'

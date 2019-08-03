@@ -1,0 +1,43 @@
+---
+- name: Docker | CE | YUM | Deploy repository
+  get_url:
+    url: "{{ docker_ce_repo_file_url }}"
+    dest: /etc/yum.repos.d/docker-ce.repo
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Docker | CE | YUM | Install yum-utils (systems without SNI)
+  yum: name=yum-utils
+  register: task_result
+  until: task_result is success
+  retries: 10
+  delay: 2
+
+- name: Docker | CE | YUM | Deploy repository (systems without SNI)
+  shell: "yum-config-manager --add-repo {{ docker_ce_repo_file_url }}"
+  args:
+    creates: /etc/yum.repos.d/docker-ce.repo
+
+- name: Docker | CE | YUM | Install docker-ce
+  yum:
+    name: docker-ce
+    state: present
+  notify: Docker | Restart Docker
+  register: task_result
+  until: task_result is success
+  retries: 10
+  delay: 2
+
+- name: enable systemd docker service
+  service:
+    name: docker
+    enabled: yes
+  notify: Docker | Restart Docker
+
+- name: add user to docker group
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: yes
+  loop: "{{ users }}"
