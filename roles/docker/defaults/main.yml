@@ -2,6 +2,14 @@
 docker_ce_repo_url: https://download.docker.com/linux/centos
 docker_ce_repo_file_url: "{{ docker_ce_repo_url }}/docker-ce.repo"
 docker_ce_gpg_key: "{{ docker_ce_repo_url }}/gpg"
+docker_swarm_init_host: "{{ inventory_hostname }}"
+docker_swarm_manager_number: 3
+docker_swarm_hosts:
+  - "{{ inventory_hostname }}"
+docker_swarm_advertise_addr: "{{ inventory_hostname }}"
+docker_swarm_manager_hosts: "{{ docker_swarm_hosts[:docker_swarm_manager_number] }}"
+docker_swarm_worker_hosts: "{{ docker_swarm_hosts[docker_swarm_manager_number:] }}"
+docker_swarm: True
 users:
   - narenderavala
   - cloud_user

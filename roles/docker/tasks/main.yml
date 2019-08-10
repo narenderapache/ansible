@@ -41,3 +41,7 @@
     groups: docker
     append: yes
   loop: "{{ users }}"
+
+- name: configure swarm
+  include_tasks: swarm.yml
+  when: docker_swarm | bool

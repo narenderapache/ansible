@@ -1,0 +1,34 @@
+---
+- name: configure docker swarm dependencies
+  pip:
+    name: docker
+    state: present
+
+- name: initialise docker swarm
+  docker_swarm:
+    state: present
+    advertise_addr: "{{ docker_swarm_advertise_addr }}"
+  register: swarm_init
+  when: docker_swarm_init_host == inventory_hostname
+
+- name: register manager and worker tokens
+  set_fact:
+    docker_swarm_manager_join_token: "{{ swarm_init['swarm_facts']['JoinTokens']['Manager'] }}"
+    docker_swarm_worker_join_token: "{{ swarm_init['swarm_facts']['JoinTokens']['Worker'] }}"
+  when: docker_swarm_init_host == inventory_hostname
+
+- name: join swarm as manager
+  docker_swarm:
+    state: join
+    advertise_addr: "{{ docker_swarm_advertise_addr }}"
+    join_token: "{{ hostvars[docker_swarm_init_host]['docker_swarm_manager_join_token'] }}"
+    remote_addrs: "{{ [ hostvars[docker_swarm_init_host]['docker_swarm_advertise_addr'] ] }}"
+  when: inventory_hostname in docker_swarm_manager_hosts
+
+- name: join as a worker
+  docker_swarm:
+    state: join
+    advertise_addr: "{{ docker_swarm_advertise_addr }}"
+    join_token: "{{ hostvars[docker_swarm_init_host]['docker_swarm_worker_join_token'] }}"
+    remote_addrs: "{{ docker_swarm_manager_hosts | map('extract', hostvars, ['docker_swarm_advertise_addr']) | list }}"
+  when: inventory_hostname not in docker_swarm_manager_hosts
