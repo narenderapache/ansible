@@ -42,4 +42,6 @@
     append: yes
   loop: "{{ users }}"
 
-- include: docker-swarm.yml
+- name: configure swarm
+  include_tasks: swarm.yml
+  when: docker_swarm | bool

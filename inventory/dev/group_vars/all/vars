@@ -1,3 +1,6 @@
 #ansible_user: cloud_user
 #become: yes
-swarm_manager_init_host: narenderavala1c.mylabserver.com
+docker_swarm_hosts: "{{ groups['all'] }}"
+docker_swarm_manager_hosts: "{{ groups['all'][:3] }}"
+docker_swarm_init_host: narenderavala1c.mylabserver.com
+docker_swarm_advertise_addr: "{{ ansible_default_ipv4['address']  }}"
